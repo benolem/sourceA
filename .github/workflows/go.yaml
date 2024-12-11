@@ -34,47 +34,57 @@ jobs:
     #     done
     #     docker images
 
-    # - name: Upload registry.k8s.io images to GHCR
-    #   run: |
-    #     echo $REGISTRY_PASSWORD | docker login $IMAGE_REGISTRY -u $REGISTRY_USER --password-stdin 
-    #     export LIST='
-    #       cpa/cluster-proportional-autoscaler:v1.8.8
-    #     '
-    #     for IMAGE in $LIST
-    #     do
-    #       docker pull registry.k8s.io/$IMAGE
-    #       docker tag registry.k8s.io/$IMAGE $IMAGE_REGISTRY/$INTEGRATION_STREAM/$IMAGE
-    #       docker push $IMAGE_REGISTRY/$INTEGRATION_STREAM/$IMAGE
-    #     done
-    #     docker images
+    - name: Upload registry.k8s.io images to GHCR
+      run: |
+        echo $REGISTRY_PASSWORD | docker login $IMAGE_REGISTRY -u $REGISTRY_USER --password-stdin 
+        export LIST='
+          dns/k8s-dns-node-cache:1.22.28
+          coredns/coredns:v1.11.1
+          metrics-server/metrics-server:v0.7.0
+        '
+        for IMAGE in $LIST
+        do
+          docker pull registry.k8s.io/$IMAGE
+          docker tag registry.k8s.io/$IMAGE $IMAGE_REGISTRY/$INTEGRATION_STREAM/$IMAGE
+          docker push $IMAGE_REGISTRY/$INTEGRATION_STREAM/$IMAGE
+        done
+        docker images
 
-    #     # Kunernetes 1.26.2 Kubespray 2.23
-    #     #   pause:3.9
-    #     #   dns/k8s-dns-node-cache:1.22.18
-    #     #   coredns/coredns:v1.9.3
-    #     #   cpa/cluster-proportional-autoscaler:v1.8.8
-    #     #   metrics-server/metrics-server:v0.6.4
-    #     # '
+        # Kunernetes 1.30.6 Kubespray 2.26
+        #   pause:3.9
+        #   dns/k8s-dns-node-cache:1.22.28
+        #   coredns/coredns:v1.11.1
+        #   cpa/cluster-proportional-autoscaler:v1.8.8
+        #   metrics-server/metrics-server:v0.7.0
+        # '
 
-    #     # Kubernetes 1.28.5 Kubespray main
-    #     # export LIST='
-    #     #   pause:3.9
-    #     #   dns/k8s-dns-node-cache:1.22.28
-    #     #   coredns/coredns:v1.10.1
-    #     #   cpa/cluster-proportional-autoscaler:v1.8.8
-    #     #   metrics-server/metrics-server:v0.6.4
-    #     # '
+        # Kunernetes 1.26.2 Kubespray 2.23
+        #   pause:3.9
+        #   dns/k8s-dns-node-cache:1.22.18
+        #   coredns/coredns:v1.9.3
+        #   cpa/cluster-proportional-autoscaler:v1.8.8
+        #   metrics-server/metrics-server:v0.6.4
+        # '
 
-    - name: Create Github Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ env.KUBE_GIT_VERSION }}
-        release_name: Release ${{ env.KUBE_GIT_VERSION }}
-        draft: false
-        prerelease: false
+        # Kubernetes 1.28.5 Kubespray main
+        # export LIST='
+        #   pause:3.9
+        #   dns/k8s-dns-node-cache:1.22.28
+        #   coredns/coredns:v1.10.1
+        #   cpa/cluster-proportional-autoscaler:v1.8.8
+        #   metrics-server/metrics-server:v0.6.4
+        # '
 
-    - name: Get GitHub Release URL
-      run: echo ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+    # - name: Create Github Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ env.KUBE_GIT_VERSION }}
+    #     release_name: Release ${{ env.KUBE_GIT_VERSION }}
+    #     draft: false
+    #     prerelease: false
+
+    # - name: Get GitHub Release URL
+    #   run: echo ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
